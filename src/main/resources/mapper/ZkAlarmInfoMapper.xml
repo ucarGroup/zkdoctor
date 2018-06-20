@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ucar.zkdoctor.business.clusterMonitorAlarmTask.dao.ZkAlarmInfoMapper">
+  <resultMap id="BaseResultMap" type="com.ucar.zkdoctor.business.clusterMonitorAlarmTask.pojo.ZkAlarmInfo">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="cluster_id" jdbcType="INTEGER" property="clusterId" />
+    <result column="machine_id" jdbcType="INTEGER" property="machineId" />
+    <result column="machine_ip" jdbcType="VARCHAR" property="machineIp" />
+    <result column="instance_id" jdbcType="INTEGER" property="instanceId" />
+    <result column="instance_ip" jdbcType="VARCHAR" property="instanceIp" />
+    <result column="port" jdbcType="INTEGER" property="port" />
+    <result column="info_content" jdbcType="VARCHAR" property="infoContent" />
+    <result column="alarm_time" jdbcType="VARCHAR" property="alarmTime" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="param1" jdbcType="VARCHAR" property="param1" />
+  </resultMap>
+  <sql id="alarm_info_alias_fields">
+        zk_alarm_info.id,
+        zk_alarm_info.cluster_id as clusterId ,
+        zk_alarm_info.machine_id as machineId,
+        zk_alarm_info.machine_ip as machineIp,
+        zk_alarm_info.instance_id as instanceId,
+        zk_alarm_info.instance_ip as instanceIp,
+        zk_alarm_info.port as port ,
+        zk_alarm_info.info_content as infoContent ,
+        zk_alarm_info.alarm_time as alarmTime,
+        zk_alarm_info.remark as remark,
+        zk_alarm_info.param1 as param1
+   </sql>
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from zk_alarm_info
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.ucar.zkdoctor.business.clusterMonitorAlarmTask.pojo.ZkAlarmInfo">
+    insert into zk_alarm_info (id, cluster_id, machine_id,
+      machine_ip, instance_id, instance_ip, 
+      port, info_content, alarm_time, 
+      remark, param1)
+    values (#{id,jdbcType=INTEGER}, #{clusterId,jdbcType=INTEGER}, #{machineId,jdbcType=INTEGER}, 
+      #{machineIp,jdbcType=VARCHAR}, #{instanceId,jdbcType=INTEGER}, #{instanceIp,jdbcType=VARCHAR}, 
+      #{port,jdbcType=INTEGER}, #{infoContent,jdbcType=VARCHAR}, #{alarmTime,jdbcType=VARCHAR},
+      #{remark,jdbcType=VARCHAR}, #{param1,jdbcType=VARCHAR})
+  </insert>
+
+  <update id="updateByPrimaryKey" parameterType="com.ucar.zkdoctor.business.clusterMonitorAlarmTask.pojo.ZkAlarmInfo">
+    update zk_alarm_info
+    set cluster_id = #{clusterId,jdbcType=INTEGER},
+      machine_id = #{machineId,jdbcType=INTEGER},
+      machine_ip = #{machineIp,jdbcType=VARCHAR},
+      instance_id = #{instanceId,jdbcType=INTEGER},
+      instance_ip = #{instanceIp,jdbcType=VARCHAR},
+      port = #{port,jdbcType=INTEGER},
+      info_content = #{infoContent,jdbcType=VARCHAR},
+      alarm_time = #{alarmTime,jdbcType=VARCHAR},
+      remark = #{remark,jdbcType=VARCHAR},
+      param1 = #{param1,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 'true' as QUERYID,id, cluster_id, machine_id, machine_ip, instance_id, instance_ip,
+    port, info_content, alarm_time, remark, param1
+    from zk_alarm_info
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <select id="selectAll" resultMap="BaseResultMap">
+    select id, cluster_id, machine_id, machine_ip, instance_id, instance_ip, port, info_content,
+    alarm_time, remark, param1
+    from zk_alarm_info
+  </select>
+
+  <select id="selectAllContainName" resultType="java.util.HashMap" parameterType="java.lang.String">
+    select
+    <include refid="alarm_info_alias_fields"/>,
+    cluster.cluster_name as clusterName
+    from zk_alarm_info
+    left join zk_cluster_info  as cluster  on  zk_alarm_info.cluster_id =cluster.id
+    where  1=1
+    <if test="_parameter !=null">
+      and zk_alarm_info.alarm_time  like CONCAT('%',#{_parameter,jdbcType=VARCHAR},'%')
+    </if>
+    order by zk_alarm_info.id desc
+  </select>
+
+  <insert id="insertZkAlarmInfo" parameterType="com.ucar.zkdoctor.business.clusterMonitorAlarmTask.pojo.ZkAlarmInfo" useGeneratedKeys="true" keyProperty="id" >
+    insert into zk_alarm_info
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="clusterId != null" >
+        cluster_id,
+      </if>
+      <if test="machineId != null" >
+        machine_id,
+      </if>
+      <if test="machineIp != null" >
+        machine_ip,
+      </if>
+      <if test="instanceId != null" >
+        instance_id,
+      </if>
+      <if test="instanceIp != null" >
+        instance_ip,
+      </if>
+      <if test="port != null" >
+        port,
+      </if>
+      <if test="infoContent != null" >
+        info_content,
+      </if>
+      <if test="alarmTime != null" >
+        alarm_time,
+      </if>
+      <if test="remark != null" >
+        remark,
+      </if>
+      <if test="param1 != null" >
+        param1
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="clusterId != null" >
+        #{clusterId,jdbcType=INTEGER},
+      </if>
+      <if test="machineId != null" >
+        #{machineId,jdbcType=INTEGER},
+      </if>
+      <if test="machineIp != null" >
+        #{machineIp,jdbcType=VARCHAR},
+      </if>
+      <if test="instanceId != null" >
+        #{instanceId,jdbcType=INTEGER},
+      </if>
+      <if test="instanceIp != null" >
+        #{instanceIp,jdbcType=VARCHAR},
+      </if>
+      <if test="port != null" >
+        #{port,jdbcType=INTEGER},
+      </if>
+      <if test="infoContent != null" >
+        #{infoContent,jdbcType=VARCHAR},
+      </if>
+      <if test="alarmTime != null">
+        #{alarmTime,jdbcType=VARCHAR},
+      </if>
+      <if test="remark != null">
+        #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="param1 !=null">
+        #{param1,jdbcType=VARCHAR}
+      </if>
+    </trim>
+  </insert>
+  <select id="selectClusterTotal" resultType="java.lang.Integer" parameterType="java.lang.Integer">
+    select count(*)  from  zk_cluster_info
+    where 1=1
+    <if test="status != null">
+      and `status` =   #{status,jdbcType=INTEGER}
+    </if>
+
+  </select>
+  <select id="selectInstanceTotal" resultType="java.lang.Integer" parameterType="java.lang.Integer">
+   select count(*)  from  zk_instance_info
+    where 1=1
+    <if test="status != null">
+      and `status` =   #{status,jdbcType=INTEGER}
+    </if>
+  </select>
+</mapper>
+

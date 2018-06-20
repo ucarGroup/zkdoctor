@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration scan="true" scanPeriod="30 seconds">
+    <!-- 普通日志 -->
+    <appender name="zkdoctorout" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${log.dir}zkdoctorout.log</file>
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} {%file:%line} {%thread} %-5level %logger{50} - %msg%n</pattern>
+        </encoder>
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>${log.level}</level>
+        </filter>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <FileNamePattern>${log.dir}oldlogs/zkdoctorout.%d{yyyy-MM-dd}.log</FileNamePattern>
+            <MaxHistory>30</MaxHistory>
+        </rollingPolicy>
+    </appender>
+
+    <!-- 错误日志 -->
+    <appender name="zkdoctorerror" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${log.dir}zkdoctorerror.log</file>
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} {%file:%line} {%thread} %-5level %logger{50} - %msg%n</pattern>
+        </encoder>
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>ERROR</level>
+        </filter>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <FileNamePattern>${log.dir}oldlogs/zkdoctorerror.%d{yyyy-MM-dd}.log</FileNamePattern>
+            <MaxHistory>30</MaxHistory>
+        </rollingPolicy>
+    </appender>
+
+    <!-- 定时任务日志 -->
+    <appender name="quartz" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${log.dir}quartz.log</file>
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} {%file:%line} {%thread} %-5level %logger{50} - %msg%n</pattern>
+        </encoder>
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>${log.level}</level>
+        </filter>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <FileNamePattern>>${log.dir}oldlogs/quartz.%d{yyyy-MM-dd}.log</FileNamePattern>
+            <MaxHistory>30</MaxHistory>
+        </rollingPolicy>
+    </appender>
+
+    <!-- 监控报警日志 -->
+    <appender name="monitor-alert" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${log.dir}monitor-alert.log</file>
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} {%file:%line} {%thread} %-5level %logger{50} - %msg%n</pattern>
+        </encoder>
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>${log.level}</level>
+        </filter>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <FileNamePattern>>${log.dir}oldlogs/monitor-alert.%d{yyyy-MM-dd}.log</FileNamePattern>
+            <MaxHistory>30</MaxHistory>
+        </rollingPolicy>
+    </appender>
+
+    <!-- zk操作日志 -->
+    <appender name="zkservice" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${log.dir}zkservice.log</file>
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} {%file:%line} {%thread} %-5level %logger{50} - %msg%n</pattern>
+        </encoder>
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>${log.level}</level>
+        </filter>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <FileNamePattern>>${log.dir}oldlogs/zkservice.%d{yyyy-MM-dd}.log</FileNamePattern>
+            <MaxHistory>30</MaxHistory>
+        </rollingPolicy>
+    </appender>
+
+    <!-- 不同日志配置 -->
+    <logger name="com.ucar.zkdoctor.service.schedule" level="${log.level}" additivity="false">
+        <appender-ref ref="quartz"/>
+    </logger>
+    <logger name="com.ucar.zkdoctor.service.monitor" level="${log.level}" additivity="false">
+        <appender-ref ref="monitor-alert"/>
+    </logger>
+    <logger name="com.ucar.zkdoctor.service.zk" level="${log.level}" additivity="false">
+        <appender-ref ref="zkservice"/>
+    </logger>
+
+    <root level="${log.level}">
+        <appender-ref ref="zkdoctorout"/>
+        <appender-ref ref="zkdoctorerror"/>
+    </root>
+
+</configuration>

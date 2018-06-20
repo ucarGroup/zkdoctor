@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ucar.zkdoctor.dao.mysql.QuartzDao">
+
+    <sql id="quartz_trigger_fields">
+         t.SCHED_NAME schedName,t.TRIGGER_NAME triggerName,t.TRIGGER_GROUP triggerGroup,t.JOB_NAME jobName,t.JOB_GROUP jobGroup,
+         t.DESCRIPTION description,t.NEXT_FIRE_TIME nextFireTime,t.PREV_FIRE_TIME prevFireTime,t.PRIORITY priority,
+        t.TRIGGER_STATE triggerState,t.TRIGGER_TYPE triggerType,t.START_TIME startTime,t.END_TIME endTime,t.CALENDAR_NAME calendarName,
+        t.MISFIRE_INSTR misfireInstr
+    </sql>
+
+    <select id="getAllTriggers" resultType="com.ucar.zkdoctor.pojo.po.TriggerInfo">
+        SELECT<include refid="quartz_trigger_fields"/>, ifnull(ct.CRON_EXPRESSION,'') cron
+        FROM ZK_QRTZ_TRIGGERS t
+        LEFT JOIN ZK_QRTZ_CRON_TRIGGERS ct
+        on (t.SCHED_NAME = ct.SCHED_NAME AND t.TRIGGER_NAME = ct.TRIGGER_NAME AND t.TRIGGER_GROUP=ct.TRIGGER_GROUP)
+    </select>
+
+    <select id="searchTriggerByNameOrGroup" resultType="com.ucar.zkdoctor.pojo.po.TriggerInfo" parameterType="String">
+        SELECT<include refid="quartz_trigger_fields"/>, ifnull(ct.CRON_EXPRESSION,'') cron
+        FROM ZK_QRTZ_TRIGGERS t
+        LEFT JOIN ZK_QRTZ_CRON_TRIGGERS ct
+        ON (t.SCHED_NAME = ct.SCHED_NAME AND t.TRIGGER_NAME = ct.TRIGGER_NAME AND t.TRIGGER_GROUP=ct.TRIGGER_GROUP)
+        WHERE t.TRIGGER_NAME REGEXP #{queryString}
+        OR t.TRIGGER_GROUP REGEXP #{queryString};
+    </select>
+</mapper>

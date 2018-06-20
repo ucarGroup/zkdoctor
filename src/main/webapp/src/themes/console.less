@@ -1,0 +1,86 @@
+@import "../../node_modules/react-console-component/lib/react-console.css";
+
+:global {
+  div.react-console-container {
+    font-size: 1.15em;
+    font-family: "Menlo", "Consolas", "DejaVu Sans Mono", monospace;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+    height: 30em;
+    background: #000;
+    padding: 0.5em;
+    overflow: auto;
+    word-break: break-all;
+    white-space: pre-wrap;
+  }
+  div.react-console-container::-webkit-scrollbar { /*滚动条整体样式*/
+    width: 10px; /*高宽分别对应横竖滚动条的尺寸*/
+    height: 10px;
+  }
+  div.react-console-container::-webkit-scrollbar-thumb { /*滚动条里面小方块*/
+    border-radius: 5px;
+    -webkit-box-shadow: inset 0 0 5px rgba(255, 255, 255, 0.2);
+    background: rgba(255, 255, 255, 0.2);
+  }
+  div.react-console-container::-webkit-scrollbar-track { /*滚动条里面轨道*/
+    -webkit-box-shadow: inset 0 0 5px rgba(255, 255, 255, 0.2);
+    border-radius: 0;
+    background: rgba(255, 255, 255, 0.1);
+  }
+
+  div.react-console-prompt-box {
+    color: #fff;
+    word-break: break-all;
+  }
+
+  span.react-console-prompt-label {
+    font-weight: bold;
+  }
+
+  div.react-console-focus span.react-console-cursor {
+    background: #eee;
+    color: #eee;
+  }
+
+  div.react-console-nofocus span.react-console-cursor {
+    background: none;
+    color: #444;
+    outline: 0.1em solid #333;
+    outline-offset: -0.1em;
+  }
+
+  div.react-console-focus span.react-console-cursor-idle {
+    animation: react-console-cursor-animation 1s infinite;
+  }
+
+  @keyframes react-console-cursor-animation {
+    0% {
+      background: #333;
+      color: #eee;
+    }
+    50% {
+      background: #333;
+      color: #eee;
+    }
+    51% {
+      background: none;
+      color: #eee;
+    }
+    100% {
+      background: none;
+      color: #eee;
+    }
+  }
+
+  div.react-console-message {
+    color: #55FF55;
+    padding: 0.1em;
+  }
+
+  div.react-console-welcome {
+    color: #55FF55;
+    padding: 0.1em;
+    text-align: center;
+  }
+}

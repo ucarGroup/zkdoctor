@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ucar.zkdoctor.business.clusterMonitorAlarmTask.dao.ZkMonitorTaskMapper">
+  <resultMap id="BaseResultMap" type="com.ucar.zkdoctor.business.clusterMonitorAlarmTask.pojo.ZkMonitorTask">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="indicator_id" jdbcType="INTEGER" property="indicatorId" />
+    <result column="cluster_id" jdbcType="INTEGER" property="clusterId" />
+    <result column="alert_value" jdbcType="VARCHAR" property="alertValue" />
+    <result column="alert_interval" jdbcType="INTEGER" property="alertInterval" />
+    <result column="alert_frequency" jdbcType="INTEGER" property="alertFrequency" />
+      <result column="alert_form" jdbcType="INTEGER" property="alertForm" />
+    <result column="switch_on" jdbcType="BIT" property="switchOn" />
+    <result column="modify_user_id" jdbcType="INTEGER" property="modifyUserId" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="modify_time" jdbcType="TIMESTAMP" property="modifyTime" />
+    <result column="param1" jdbcType="VARCHAR" property="param1" />
+  </resultMap>
+  <sql id="monitor_task_fields">
+        id, indicator_id, cluster_id, alert_value, alert_interval, alert_frequency,
+       alert_form, switch_on, modify_user_id, create_time, modify_time, param1
+   </sql>
+  <sql id="monitor_task_alias_fields">
+        zk_monitor_task.id,
+        zk_monitor_task.indicator_id as indicatorId ,
+        zk_monitor_task.cluster_id as clusterId,
+        zk_monitor_task.alert_value as alertValue,
+        zk_monitor_task.alert_interval as alertInterval,
+        zk_monitor_task.alert_frequency  as alertFrequency,
+        zk_monitor_task.alert_form as alertForm ,
+        zk_monitor_task.switch_on as switchOn ,
+        zk_monitor_task.modify_user_id as modifyUserId,
+        zk_monitor_task.create_time as createTime,
+        zk_monitor_task.modify_time as modifyTime ,
+        zk_monitor_task.param1 as param1
+   </sql>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from zk_monitor_task
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.ucar.zkdoctor.business.clusterMonitorAlarmTask.pojo.ZkMonitorTask">
+    insert into zk_monitor_task (id, indicator_id, cluster_id,
+      alert_value, alert_interval, alert_frequency,
+      alert_form, switch_on, modify_user_id,
+      create_time, modify_time, param1
+      )
+    values (#{id,jdbcType=INTEGER}, #{indicatorId,jdbcType=INTEGER}, #{clusterId,jdbcType=INTEGER},
+      #{alertValue,jdbcType=VARCHAR}, #{alertInterval,jdbcType=INTEGER}, #{alertFrequency,jdbcType=INTEGER},
+      #{alertForm,jdbcType=BIT}, #{switchOn,jdbcType=BIT}, #{modifyUserId,jdbcType=INTEGER},
+      #{createTime,jdbcType=TIMESTAMP}, #{modifyTime,jdbcType=TIMESTAMP}, #{param1,jdbcType=VARCHAR}
+      )
+  </insert>
+  <update id="updateByPrimaryKey" parameterType="com.ucar.zkdoctor.business.clusterMonitorAlarmTask.pojo.ZkMonitorTask">
+   update zk_monitor_task
+      <trim prefix="SET" suffixOverrides=",">
+          <if test="indicatorId != null" >
+              indicator_id = #{indicatorId,jdbcType=INTEGER},
+          </if>
+          <if test="clusterId != null" >
+              cluster_id = #{clusterId,jdbcType=INTEGER},
+          </if>
+          <if test="alertValue != null" >
+              alert_value = #{alertValue,jdbcType=VARCHAR},
+          </if>
+          <if test="alertInterval != null" >
+              alert_interval = #{alertInterval,jdbcType=INTEGER},
+          </if>
+          <if test="alertFrequency != null" >
+              alert_frequency = #{alertFrequency,jdbcType=INTEGER},
+          </if>
+          <if test="alertForm != null" >
+              alert_form = #{alertForm,jdbcType=BIT},
+          </if>
+          <if test="switchOn != null" >
+              switch_on = #{switchOn,jdbcType=BIT},
+          </if>
+          <if test="modifyUserId != null" >
+              modify_user_id = #{modifyUserId,jdbcType=INTEGER},
+          </if>
+          <if test="createTime != null" >
+              create_time = #{createTime,jdbcType=TIMESTAMP},
+          </if>
+          <if test="modifyTime != null" >
+              modify_time = #{modifyTime,jdbcType=TIMESTAMP},
+          </if>
+          <if test="param1 != null" >
+              param1 = #{param1,jdbcType=VARCHAR},
+          </if>
+      </trim>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+    <update id="updateByPrimaryKey_all" parameterType="com.ucar.zkdoctor.business.clusterMonitorAlarmTask.pojo.ZkMonitorTask">
+    update zk_monitor_task
+    set indicator_id = #{indicatorId,jdbcType=INTEGER},
+      cluster_id = #{clusterId,jdbcType=INTEGER},
+      alert_value = #{alertValue,jdbcType=VARCHAR},
+      alert_interval = #{alertInterval,jdbcType=INTEGER},
+      alert_frequency = #{alertFrequency,jdbcType=INTEGER},
+      alert_form = #{alertForm,jdbcType=BIT},
+      switch_on = #{switchOn,jdbcType=BIT},
+      modify_user_id = #{modifyUserId,jdbcType=INTEGER},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      modify_time = #{modifyTime,jdbcType=TIMESTAMP},
+      param1 = #{param1,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 'true' as QUERYID,id, indicator_id, cluster_id, alert_value, alert_interval, 
+    alert_frequency, alert_form, switch_on, modify_user_id, create_time, modify_time, 
+    param1
+    from zk_monitor_task
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <select id="selectAll" resultMap="BaseResultMap">
+    select <include refid="monitor_task_fields"/>
+    from zk_monitor_task
+  </select>
+
+  <select id="selectAllContainName" resultType="java.util.HashMap">
+    select
+   <include refid="monitor_task_alias_fields"/> ,
+    cluster.cluster_name as clusterName  ,mindicator.indicator_name as indicatorName
+    from zk_monitor_task
+    left join zk_cluster_info  as cluster  on  zk_monitor_task.cluster_id =cluster.id
+    left join zk_monitor_indicator  as mindicator on zk_monitor_task.indicator_id = mindicator.id
+  </select>
+    <select id="selectByClusterId" resultType="java.util.HashMap">
+        select
+        <include refid="monitor_task_alias_fields"/> ,
+        cluster.cluster_name as clusterName  ,mindicator.indicator_name as indicatorName,mindicator.alert_value_unit as alertValueUnit
+        from zk_monitor_task
+        left join zk_cluster_info  as cluster  on  zk_monitor_task.cluster_id =cluster.id
+        left join zk_monitor_indicator  as mindicator on zk_monitor_task.indicator_id = mindicator.id
+        where zk_monitor_task.cluster_id = #{clusterId,jdbcType=INTEGER}
+    </select>
+   <update id="updateMonitorTaskSwitchOn" parameterType="com.ucar.zkdoctor.business.clusterMonitorAlarmTask.pojo.ZkMonitorTask">
+    update zk_monitor_task
+    set
+      switch_on = #{switchOn,jdbcType=BIT},
+      modify_time=now()
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

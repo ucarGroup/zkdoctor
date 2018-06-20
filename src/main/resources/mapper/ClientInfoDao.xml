@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ucar.zkdoctor.dao.mysql.ClientInfoDao">
+
+    <sql id="instance_connection_fields">
+        id,instance_id instanceId,cluster_id clusterId,client_ip clientIp,client_port clientPort,sid,queued,recved,sent,est,to_time toTime,
+        lcxid,lzxid,lresp,llat,minlat,avglat,maxlat,create_time createTime
+    </sql>
+
+    <sql id="instance_connection_insert_fields">
+        instance_id,cluster_id,client_ip,client_port,sid,queued,recved,sent,est,to_time,
+        lcxid,lzxid,lresp,llat,minlat,avglat,maxlat,create_time
+    </sql>
+
+    <insert id="batchInsertClientConnections" parameterType="list" useGeneratedKeys="true">
+        <selectKey resultType="long" keyProperty="id" order="AFTER">
+            SELECT
+            LAST_INSERT_ID()
+        </selectKey>
+        INSERT INTO zk_client_log
+        (<include refid="instance_connection_insert_fields"/>)
+        VALUES
+        <foreach collection="list" item="item" index="index" separator=",">
+            (#{item.instanceId},#{item.clusterId},#{item.clientIp},#{item.clientPort},#{item.sid},#{item.queued},
+            #{item.recved},#{item.sent},#{item.est},#{item.toTime},#{item.lcxid},#{item.lzxid},
+            #{item.lresp},#{item.llat},#{item.minlat},#{item.avglat},#{item.maxlat},#{item.createTime})
+        </foreach>
+    </insert>
+
+    <select id="getClientConnectionsByParams" resultType="com.ucar.zkdoctor.pojo.po.ClientInfo"
+            parameterType="com.ucar.zkdoctor.pojo.bo.ClientConnectionSearchBO">
+        SELECT
+        <include refid="instance_connection_fields"/>
+        FROM zk_client_log
+        WHERE 1 = 1
+        <choose>
+            <when test="clusterId != null">
+                AND cluster_id = #{clusterId}
+            </when>
+        </choose>
+        <choose>
+            <when test="instanceId != null">
+                AND instance_id = #{instanceId}
+            </when>
+        </choose>
+        <choose>
+            <when test="startDate != null">
+                <![CDATA[ AND create_time >= #{startDate} ]]>
+            </when>
+        </choose>
+        <choose>
+            <when test="endDate != null">
+                <![CDATA[ AND create_time <= #{endDate} ]]>
+            </when>
+        </choose>
+        ORDER BY
+        <choose>
+            <when test="orderBy != null and orderBy != ''">
+                ${orderBy}
+            </when>
+            <otherwise>
+                create_time
+            </otherwise>
+        </choose>
+        DESC
+    </select>
+
+    <delete id="cleanClientConnectionsData" parameterType="date">
+        <![CDATA[ DELETE FROM zk_client_log WHERE create_time < #{endDate} limit 1000 ]]>
+    </delete>
+
+    <select id="cleanClientConnectionsCount" resultType="java.lang.Long" parameterType="date">
+        <![CDATA[ SELECT COUNT(*) FROM zk_client_log WHERE create_time < #{endDate} ]]>
+    </select>
+
+    <select id="getLatestClientInfo" resultType="com.ucar.zkdoctor.pojo.po.ClientInfo" parameterType="int">
+        SELECT
+        <include refid="instance_connection_fields"/>
+        FROM zk_client_log
+        WHERE instance_id = #{instanceId} ORDER BY create_time DESC LIMIT 1
+    </select>
+
+</mapper>

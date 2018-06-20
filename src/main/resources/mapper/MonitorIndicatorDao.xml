@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ucar.zkdoctor.dao.mysql.MonitorIndicatorDao">
+
+    <sql id="monitor_indicator_fields">
+        id,indicator_name indicatorName,class_name className,default_alert_value defaultAlertValue,
+        default_alert_interval defaultAlertInterval,default_alert_frequency defaultAlertFrequency,
+        default_alert_form defaultAlertForm,alert_value_unit alertValueUnit,switch_on switchOn,
+        modify_user_id modifyUserId,info,create_time createTime,modify_time modifyTime,param1
+    </sql>
+
+    <sql id="monitor_indicator_insert_fields">
+        id,indicator_name,class_name,default_alert_value,
+        default_alert_interval,default_alert_frequency,
+        default_alert_form,alert_value_unit,switch_on,
+        modify_user_id,info,create_time,modify_time,param1
+    </sql>
+
+    <insert id="insertIndicator" parameterType="com.ucar.zkdoctor.pojo.po.MonitorIndicator"  keyProperty="id" useGeneratedKeys="true" >
+        INSERT INTO zk_monitor_indicator
+        (<include refid="monitor_indicator_insert_fields"/>)
+        VALUES
+        (#{id},#{indicatorName},#{className},#{defaultAlertValue},#{defaultAlertInterval},#{defaultAlertFrequency},#{defaultAlertForm},
+        #{alertValueUnit},#{switchOn},#{modifyUserId},#{info},now(),#{modifyTime},#{param1})
+    </insert>
+
+    <update id="updateIndicator" parameterType="com.ucar.zkdoctor.pojo.po.MonitorIndicator">
+        UPDATE zk_monitor_indicator
+        SET indicator_name=#{indicatorName},default_alert_value=#{defaultAlertValue},
+        default_alert_interval=#{defaultAlertInterval},default_alert_frequency=#{defaultAlertFrequency},
+        default_alert_form=#{defaultAlertForm},modify_user_id=#{modifyUserId},info=#{info},
+        modify_time=#{modifyTime},param1=#{param1}
+        WHERE id = #{id}
+    </update>
+
+    <update id="updateIndicatorSwitchOn">
+        UPDATE zk_monitor_indicator
+        SET switch_on=#{switchOn},modify_time=now()
+        WHERE id = #{id}
+    </update>
+
+    <select id="getIndicatorByIndicatorId" resultType="com.ucar.zkdoctor.pojo.po.MonitorIndicator" parameterType="int">
+        SELECT
+        <include refid="monitor_indicator_fields"/>
+        FROM zk_monitor_indicator WHERE id = #{id}
+    </select>
+
+    <select id="getIndicatorByClassName" resultType="com.ucar.zkdoctor.pojo.po.MonitorIndicator" parameterType="String">
+        SELECT
+        <include refid="monitor_indicator_fields"/>
+        FROM zk_monitor_indicator WHERE class_name = #{className}
+    </select>
+
+    <select id="getIndicatorsByParams" resultType="com.ucar.zkdoctor.pojo.po.MonitorIndicator"
+            parameterType="com.ucar.zkdoctor.pojo.bo.MonitorIndicatorSearchBO">
+        SELECT
+        <include refid="monitor_indicator_fields"/>
+        FROM zk_monitor_indicator WHERE 1 = 1
+        <choose>
+            <when test="indicatorName != null and indicatorName != ''">
+                AND indicator_name LIKE '${indicatorName}%'
+            </when>
+        </choose>
+        <choose>
+            <when test="className != null and className != ''">
+                AND class_name LIKE '${className}%'
+            </when>
+        </choose>
+        <choose>
+            <when test="switchOn != null">
+                AND switch_on = ${switchOn}
+            </when>
+        </choose>
+        <choose>
+            <when test="modifyUserId != null and modifyUserId > 0">
+                AND modify_user_id = ${modifyUserId}
+            </when>
+        </choose>
+    </select>
+
+    <delete id="deleteIndicatorByIndicatorId" parameterType="int">
+        DELETE FROM zk_monitor_indicator WHERE id = #{id}
+    </delete>
+</mapper>
+
+

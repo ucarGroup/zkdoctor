@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ucar.zkdoctor.dao.mysql.SysConfigDao">
+
+    <sql id="sys_config_fields">
+        id,config_name configName,config_value configValue,config_desc configDesc
+    </sql>
+
+    <sql id="sys_config_insert_fields">
+        id,config_name,config_value,config_desc
+    </sql>
+
+    <insert id="insertSysConfig" parameterType="com.ucar.zkdoctor.pojo.po.SysConfig" keyProperty="id"
+            useGeneratedKeys="true">
+        INSERT INTO zk_sys_config
+        (<include refid="sys_config_insert_fields"/>)
+        VALUES
+        (#{id},#{configName},#{configValue},#{configDesc})
+        ON DUPLICATE KEY UPDATE
+        config_value = #{configValue};
+    </insert>
+
+    <select id="getSysConfigByName" resultType="com.ucar.zkdoctor.pojo.po.SysConfig" parameterType="string">
+        SELECT
+        <include refid="sys_config_fields"/>
+        FROM zk_sys_config
+        WHERE config_name = #{configName};
+    </select>
+
+    <select id="getAllSysConfig" resultType="com.ucar.zkdoctor.pojo.po.SysConfig">
+        SELECT
+        <include refid="sys_config_fields"/>
+        FROM zk_sys_config;
+    </select>
+
+    <delete id="deleteSysConfigByName" parameterType="string">
+        DELETE FROM zk_sys_config WHERE config_name = #{configName};
+    </delete>
+</mapper>

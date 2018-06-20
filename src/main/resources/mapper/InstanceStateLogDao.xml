@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ucar.zkdoctor.dao.mysql.InstanceStateLogDao">
+
+    <sql id="instance_state_log_fields">
+        id,instance_id instanceId,host_info hostInfo,cluster_id clusterId,version,leader_id leaderId,avg_latency avgLatency,max_latency maxLatency,min_latency minLatency,
+        received,sent,connections,znode_count znodeCount,watch_count watchCount,ephemerals_count ephemeralsCount,
+        outstandings,approximate_data_size approximateDataSize,open_file_descriptor_count openFileDescriptorCount,max_file_descriptor_count maxFileDescriptorCount,
+        followers,synced_followers syncedFollowers,pending_syncs pendingSyncs,zxid,run_ok runOk,server_state_lag serverStateLag,create_time createTime
+    </sql>
+
+    <sql id="instance_insert_state_log_fields">
+        instance_id,host_info,cluster_id,version,leader_id,avg_latency,max_latency,min_latency,
+        received,sent,connections,znode_count,watch_count,ephemerals_count,
+        outstandings,approximate_data_size,open_file_descriptor_count,max_file_descriptor_count,
+        followers,synced_followers,pending_syncs,zxid,run_ok,server_state_lag,create_time
+    </sql>
+
+    <insert id="batchInsertInstanceStateLogs" parameterType="list" useGeneratedKeys="true">
+        <selectKey resultType="long" keyProperty="id" order="AFTER">
+            SELECT
+            LAST_INSERT_ID()
+        </selectKey>
+        INSERT INTO zk_instance_state_log
+        (<include refid="instance_insert_state_log_fields"/>)
+        VALUES
+        <foreach collection="list" item="item" index="index" separator=",">
+            (#{item.instanceId},#{item.hostInfo},#{item.clusterId},#{item.version},#{item.leaderId},#{item.avgLatency},#{item.maxLatency},
+            #{item.minLatency},#{item.received},#{item.sent},#{item.connections},#{item.znodeCount},#{item.watchCount},
+            #{item.ephemeralsCount},#{item.outstandings},#{item.approximateDataSize},#{item.openFileDescriptorCount},#{item.maxFileDescriptorCount},
+            #{item.followers},#{item.syncedFollowers},#{item.pendingSyncs},#{item.zxid},#{item.runOk},#{item.serverStateLag},#{item.createTime})
+        </foreach>
+    </insert>
+
+    <insert id="insertInstanceStateLogs" parameterType="com.ucar.zkdoctor.pojo.po.InstanceStateLog" keyProperty="id"
+            useGeneratedKeys="true">
+        INSERT INTO zk_instance_state_log
+        (<include refid="instance_insert_state_log_fields"/>)
+        VALUES
+        (#{instanceId},#{hostInfo},#{clusterId},#{version},#{leaderId},#{avgLatency},#{maxLatency},
+        #{minLatency},#{received},#{sent},#{connections},#{znodeCount},#{watchCount},
+        #{ephemeralsCount},#{outstandings},#{approximateDataSize},#{openFileDescriptorCount},#{maxFileDescriptorCount},
+        #{followers},#{syncedFollowers},#{pendingSyncs},#{zxid},#{runOk},#{serverStateLag},#{createTime})
+    </insert>
+
+    <select id="getInstanceStateLogByClusterParams" resultType="com.ucar.zkdoctor.pojo.po.InstanceStateLog"
+            parameterType="com.ucar.zkdoctor.pojo.bo.InstanceStateLogSearchBO">
+        SELECT cluster_id clusterId,
+        <choose>
+            <when test="onlyLeader">
+                znode_count znodeCount,ephemerals_count ephemeralsCount,approximate_data_size approximateDataSize,zxid,
+            </when>
+            <otherwise>
+                max(avg_latency) avgLatency,max(max_latency) maxLatency,max(min_latency) minLatency,sum(received) received,
+                sum(sent) sent,sum(connections) connections,sum(watch_count) watchCount, sum(outstandings) outstandings,
+                max(open_file_descriptor_count) openFileDescriptorCount,max(max_file_descriptor_count) maxFileDescriptorCount,
+            </otherwise>
+        </choose>
+        create_time createTime
+        <![CDATA[ FROM zk_instance_state_log
+        WHERE cluster_id = #{clusterId} AND create_time >= #{startDate} AND create_time < #{endDate} GROUP BY cluster_id,create_time]]>
+    </select>
+
+    <select id="getInstanceStateLogByInstance" resultType="com.ucar.zkdoctor.pojo.po.InstanceStateLog">
+        SELECT
+        <include refid="instance_state_log_fields"/>
+        <![CDATA[ FROM zk_instance_state_log WHERE instance_id = #{instanceId} AND create_time >= #{startDate} AND create_time <= #{endDate} ]]>
+    </select>
+
+    <select id="getInstanceStateLogByCluster" resultType="com.ucar.zkdoctor.pojo.po.InstanceStateLog">
+        SELECT
+        <include refid="instance_state_log_fields"/>
+        <![CDATA[ FROM zk_instance_state_log WHERE cluster_id = #{clusterId} AND create_time >= #{startDate} AND create_time <= #{endDate} ]]>
+    </select>
+
+    <delete id="cleanInstanceStateLogData" parameterType="date">
+    <![CDATA[ DELETE FROM zk_instance_state_log WHERE create_time < #{endDate} limit 1000 ]]>
+    </delete>
+
+    <select id="cleanInstanceStateLogCount" resultType="java.lang.Long" parameterType="date">
+    <![CDATA[ SELECT count(*) FROM zk_instance_state_log WHERE create_time < #{endDate} ]]>
+    </select>
+
+</mapper>

@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ucar.zkdoctor.dao.mysql.InstanceInfoDao">
+
+    <sql id="instance_fields">
+        id,cluster_id clusterId,machine_id machineId,host,port,connection_monitor connectionMonitor, deploy_type deployType,server_state_lag serverStateLag,status,create_time createTime,modify_time modifyTime,param1
+    </sql>
+
+    <sql id="instance_insert_fields">
+        id,cluster_id,machine_id,host,port,connection_monitor,deploy_type,server_state_lag,status,create_time,param1
+    </sql>
+
+    <insert id="insertInstance" parameterType="com.ucar.zkdoctor.pojo.po.InstanceInfo" keyProperty="id" useGeneratedKeys="true">
+        INSERT INTO zk_instance_info
+        (<include refid="instance_insert_fields"/>)
+        VALUES
+        (#{id},#{clusterId},#{machineId},#{host},#{port},#{connectionMonitor},#{deployType},#{serverStateLag},#{status},#{createTime},#{param1});
+    </insert>
+
+    <select id="getInstanceInfoById" resultType="com.ucar.zkdoctor.pojo.po.InstanceInfo" parameterType="int">
+        SELECT
+        <include refid="instance_fields"/>
+        FROM zk_instance_info
+        WHERE id = #{id};
+    </select>
+
+    <select id="getInstanceInfoByStatus" resultType="com.ucar.zkdoctor.pojo.po.InstanceInfo" parameterType="int">
+        SELECT
+        zk_instance_info.id as id,cluster_id clusterId,cluster.cluster_name as clusterName,machine_id machineId,host,port,
+        connection_monitor connectionMonitor,zk_instance_info.deploy_type as deployType,server_state_lag serverStateLag,
+        zk_instance_info.status as status,zk_instance_info.create_time as createTime,
+        zk_instance_info.modify_time as modifyTime,zk_instance_info.param1 as param1
+        FROM zk_instance_info
+        left join zk_cluster_info as cluster on zk_instance_info.cluster_id = cluster.id
+        WHERE zk_instance_info.status = #{status};
+    </select>
+
+    <select id="getInstanceByHostAndPort" resultType="com.ucar.zkdoctor.pojo.po.InstanceInfo">
+        SELECT
+        <include refid="instance_fields"/>
+        FROM zk_instance_info
+        WHERE host = #{host} and port = #{port};
+    </select>
+
+    <select id="getInstancesByClusterId" resultType="com.ucar.zkdoctor.pojo.po.InstanceInfo"  parameterType="int">
+        SELECT
+        <include refid="instance_fields"/>
+        FROM zk_instance_info
+        WHERE cluster_id = #{clusterId};
+    </select>
+
+    <select id="getAllOnLineInstancesByClusterId" resultType="com.ucar.zkdoctor.pojo.po.InstanceInfo" parameterType="int">
+        SELECT
+        <include refid="instance_fields"/>
+        FROM zk_instance_info
+        WHERE cluster_id = #{clusterId} and status != 3;
+    </select>
+
+    <select id="getAllInstances" resultType="com.ucar.zkdoctor.pojo.po.InstanceInfo">
+        SELECT
+        <include refid="instance_fields"/>
+        FROM zk_instance_info;
+    </select>
+
+    <select id="getInstancesByMachineId" resultType="com.ucar.zkdoctor.pojo.po.InstanceInfo"  parameterType="int">
+        SELECT
+        <include refid="instance_fields"/>
+        FROM zk_instance_info
+        WHERE machine_id = #{machineId};
+    </select>
+
+    <select id="getAllInstancesByParams" resultType="com.ucar.zkdoctor.pojo.po.InstanceInfo"
+            parameterType="com.ucar.zkdoctor.pojo.bo.InstanceInfoSearchBO">
+        SELECT
+        <include refid="instance_fields"/>
+        FROM zk_instance_info
+        WHERE 1 = 1
+        <choose>
+            <when test="clusterId != null and clusterId >= 0">
+                AND cluster_id = #{clusterId}
+            </when>
+        </choose>
+        <choose>
+            <when test="machineId != null and machineId >= 0">
+                AND machine_id = #{machineId}
+            </when>
+        </choose>
+        <choose>
+            <when test="host != null and host != ''">
+                AND host = #{host}
+            </when>
+        </choose>
+        <choose>
+            <when test="deployType != null">
+                AND mobile = #{mobile}
+            </when>
+        </choose>
+        <choose>
+            <when test="status != null">
+                AND status = #{status}
+            </when>
+        </choose>
+    </select>
+
+    <update id="updateInstance" parameterType="com.ucar.zkdoctor.pojo.po.InstanceInfo">
+        UPDATE zk_instance_info
+        SET deploy_type=#{deployType},status=#{status},modify_time=#{modifyTime}
+        WHERE id=#{id};
+    </update>
+
+    <update id="updateInstanceStatus">
+        UPDATE zk_instance_info
+        SET status=#{status},modify_time=now()
+        WHERE id=#{id};
+    </update>
+
+    <update id="updateInstanceServerStateLag">
+        UPDATE zk_instance_info
+        SET server_state_lag=#{serverStateLag},modify_time=now()
+        WHERE id=#{id};
+    </update>
+
+    <delete id="deleteInstanceById" parameterType="int">
+        DELETE FROM zk_instance_info WHERE id = #{id};
+    </delete>
+
+    <delete id="deleteInstancesByClusterId" parameterType="int">
+        DELETE FROM zk_instance_info WHERE cluster_id = #{clusterId};
+    </delete>
+
+    <select id="getInstanceCountByClusterId" resultType="int" >
+        SELECT COUNT(*)
+        FROM zk_instance_info
+        WHERE cluster_id = #{clusterId};
+    </select>
+
+    <select id="getInstanceTotalCount" resultType="int" >
+        SELECT count(*)
+        FROM zk_instance_info;
+    </select>
+
+    <select id="getNormalInstancesByClusterId" resultType="com.ucar.zkdoctor.pojo.po.InstanceInfo">
+        SELECT
+        <include refid="instance_fields"/>
+        FROM zk_instance_info
+        WHERE status = 1;
+    </select>
+
+    <select id="getMonitoringCount" resultType="int" >
+        SELECT COUNT(*)
+        FROM zk_instance_info instance LEFT JOIN zk_cluster_info app ON instance.cluster_id = app.id
+        WHERE app.status = 2 OR app.status = 4;
+    </select>
+
+    <select id="getLeaderOrStandaloneInstance" resultType="com.ucar.zkdoctor.pojo.po.InstanceInfo" parameterType="int">
+        SELECT
+        <include refid="instance_fields"/>
+        FROM zk_instance_info
+        WHERE cluster_id = #{clusterId} AND (server_state_lag = 1 OR server_state_lag = 3) AND status != 3;
+    </select>
+
+    <update id="updateInstanceConnMonitor">
+        UPDATE zk_instance_info
+        SET connection_monitor=#{connectionMonitor},modify_time=now()
+        WHERE id=#{id};
+    </update>
+
+    <select id="getAllConnMonitorInstance" resultType="com.ucar.zkdoctor.pojo.po.InstanceInfo">
+        SELECT
+        <include refid="instance_fields"/>
+        FROM zk_instance_info
+        WHERE connection_monitor = 1;
+    </select>
+
+</mapper>

@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ucar.zkdoctor.dao.mysql.UserDao">
+
+    <sql id="user_fields">
+        id,user_name userName,password,ch_name chName,email,mobile,user_role userRole,create_time createTime,modify_time modifyTime,param1
+    </sql>
+
+    <sql id="user_update_fields">
+        id,user_name,password,ch_name,email,mobile,user_role,create_time,param1
+    </sql>
+
+    <select id="getUserById" resultType="com.ucar.zkdoctor.pojo.po.User" parameterType="int">
+        SELECT
+        <include refid="user_fields"/>
+        FROM zk_user
+        WHERE id = #{id};
+    </select>
+
+    <select id="getUserByName" resultType="com.ucar.zkdoctor.pojo.po.User" parameterType="string">
+        SELECT
+        <include refid="user_fields"/>
+        FROM zk_user
+        WHERE user_name = #{userName};
+    </select>
+
+    <insert id="insertNewUser" parameterType="com.ucar.zkdoctor.pojo.po.User" keyProperty="id" useGeneratedKeys="true">
+        INSERT INTO zk_user
+        (<include refid="user_update_fields"/>)
+        VALUES
+        (#{id},#{userName},#{password},#{chName},#{email},#{mobile},#{userRole},#{createTime},#{param1})
+    </insert>
+
+    <update id="updateUser" parameterType="com.ucar.zkdoctor.pojo.po.User">
+        UPDATE zk_user
+        SET ch_name=#{chName},email=#{email},mobile=#{mobile},user_role=#{userRole},modify_time=#{modifyTime}
+        WHERE id=#{id}
+    </update>
+
+    <delete id="deleteUserById" parameterType="int">
+      DELETE FROM zk_user WHERE id = #{userId}
+    </delete>
+
+    <delete id="deleteUserByName" parameterType="string">
+        DELETE FROM zk_user WHERE user_name = #{userName}
+    </delete>
+
+    <select id="getAllUsersByParams" resultType="com.ucar.zkdoctor.pojo.po.User" parameterType="com.ucar.zkdoctor.pojo.bo.UserSearchBO">
+        SELECT
+        <include refid="user_fields"/>
+        FROM zk_user
+        WHERE 1 = 1
+        <choose>
+            <when test="userName != null and userName != ''">
+                AND user_name LIKE '${userName}%'
+            </when>
+        </choose>
+        <choose>
+            <when test="chName != null and chName != ''">
+                AND ch_name LIKE '${chName}%'
+            </when>
+        </choose>
+        <choose>
+            <when test="email != null and email != ''">
+                AND email LIKE '${email}%'
+            </when>
+        </choose>
+        <choose>
+            <when test="mobile != null and mobile != ''">
+                AND mobile = #{mobile}
+            </when>
+        </choose>
+        <choose>
+            <when test="userRole != null and userRole >= 0">
+                AND user_role = #{userRole}
+            </when>
+        </choose>
+    </select>
+
+</mapper>

@@ -1,0 +1,44 @@
+@import "../../themes/vars.less";
+
+.welcome {
+  color: #fff;
+  height: 100%;
+  width: 100%;
+  justify-content: space-between;
+  font-size: 14px;
+
+  .logo {
+    padding-top: 8%;
+    display: flex;
+    flex-direction: column;
+
+    .icon {
+      margin-left: 40%;
+      width: 209px;
+      height: 145px;
+      background-position: center;
+      background-size: cover;
+    }
+
+  }
+
+  .text {
+    display: flex;
+    flex-direction: column;
+    width: 70%;
+    margin-top: 5%;
+    .temperature {
+      color:#428F71;
+      font-size: 36px;
+      text-align: right;
+      height: 64px;
+    }
+
+    .description {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      text-align: right;
+    }
+  }
+}

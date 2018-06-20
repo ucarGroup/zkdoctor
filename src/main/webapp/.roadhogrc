@@ -1,0 +1,21 @@
+{
+  "entry": "src/index.tsx",
+  "disableCSSModules": false,
+  "publicPath": "/zkdoctor/dist/",
+  "theme": "./src/theme.js",
+  "autoprefixer": null,
+  "multipage": false,
+  "hash": true,
+  "extraBabelPlugins": [
+    "transform-runtime",
+    ["import", { "libraryName": "antd", "style": true }]
+  ]
+  // 代理配置
+  ,"proxy": {
+      "/zkdoctor": {
+           "target": "http://localhost:8080/zkdoctor",
+               "changeOrigin": true,
+               "pathRewrite": { "^/zkdoctor" : "" }
+      }
+  }
+}

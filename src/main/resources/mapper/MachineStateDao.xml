@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ucar.zkdoctor.dao.mysql.MachineStateDao">
+
+    <sql id="machine_state_fields">
+        id,machine_id machineId,host,cpu_usage cpuUsage,avg_load avgLoad,net_traffic netTraffic,memory_usage memoryUsage,memory_free memoryFree,memory_total memoryTotal,
+        disk_usage diskUsage,data_disk_used dataDiskUsed,data_disk_total dataDiskTotal,create_time createTime,modify_time modifyTime,param1
+    </sql>
+
+    <sql id="machine_state_insert_fields">
+       id,machine_id,host,cpu_usage,avg_load,net_traffic,memory_usage,memory_free,memory_total,
+       disk_usage,data_disk_used,data_disk_total,create_time,modify_time,param1
+    </sql>
+
+    <insert id="insertMachineState" parameterType="com.ucar.zkdoctor.pojo.po.MachineState" keyProperty="id"
+            useGeneratedKeys="true">
+        INSERT INTO zk_machine_state
+        (<include refid="machine_state_insert_fields"/>)
+        VALUES
+        (#{id},#{machineId},#{host},#{cpuUsage},#{avgLoad},#{netTraffic},#{memoryUsage},#{memoryFree},#{memoryTotal},#{diskUsage},
+         #{dataDiskUsed},#{dataDiskTotal},#{createTime},#{modifyTime},#{param1})
+        ON DUPLICATE KEY UPDATE
+        machine_id = #{machineId},
+        host = #{host},
+        cpu_usage = #{cpuUsage},
+        avg_load = #{avgLoad},
+        net_traffic = #{netTraffic},
+        memory_usage = #{memoryUsage},
+        memory_free = #{memoryFree},
+        memory_total = #{memoryTotal},
+        disk_usage = #{diskUsage},
+        data_disk_used = #{dataDiskUsed},
+        data_disk_total = #{dataDiskTotal},
+        modify_time = #{modifyTime},
+        param1 = #{param1};
+    </insert>
+
+    <select id="getMachineStateByMachineId" resultType="com.ucar.zkdoctor.pojo.po.MachineState" parameterType="int">
+        SELECT
+        <include refid="machine_state_fields"/>
+        FROM zk_machine_state
+        WHERE machine_id = #{machineId};
+    </select>
+
+    <delete id="deleteMachineStateByMachineId" parameterType="int">
+        DELETE FROM zk_machine_state WHERE machine_id = #{machineId};
+    </delete>
+
+</mapper>

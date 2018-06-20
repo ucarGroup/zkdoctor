@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ucar.zkdoctor.dao.mysql.MachineStateLogDao">
+
+    <sql id="machine_state_log_fields">
+        id,machine_id machineId,host,cpu_user_percent cpuUserPercent,cpu_nice_percent cpuNicePercent,cpu_sys_percent cpuSysPercent,
+        cpu_single_usage cpuSingleUsage,cpu_usage cpuUsage,io_wait_percent ioWaitPercent,idle_percent idlePercent,
+        memory_free memoryFree,memory_total memoryTotal,buffers,cached,memory_usage memoryUsage,avg_load avgLoad,disk_situation diskSituation,
+        disk_free_percent diskFreePercent,disk_usage diskUsage,net_traffic netTraffic,net_flow_in netFlowIn,
+        net_flow_out netFlowOut,create_time createTime,param1
+    </sql>
+
+    <sql id="machine_insert_state_log_fields">
+        id,machine_id,host,cpu_user_percent,cpu_nice_percent,cpu_sys_percent,
+        cpu_single_usage,cpu_usage,io_wait_percent,idle_percent,
+        memory_free,memory_total,buffers,cached,memory_usage,avg_load,disk_situation,
+        disk_free_percent,disk_usage,net_traffic,net_flow_in,
+        net_flow_out,create_time,param1
+    </sql>
+
+    <insert id="batchInsertMachineStateLogs" parameterType="list" useGeneratedKeys="true">
+        <selectKey resultType="long" keyProperty="id" order="AFTER">
+            SELECT
+            LAST_INSERT_ID()
+        </selectKey>
+        INSERT INTO zk_machine_state_log
+        (<include refid="machine_insert_state_log_fields"/>)
+        VALUES
+        <foreach collection="list" item="item" index="index" separator=",">
+            (#{item.id},#{item.machineId},#{item.host},#{item.cpuUserPercent},#{item.cpuNicePercent},#{item.cpuSysPercent},#{item.cpuSingleUsage},#{item.cpuUsage},
+            #{item.ioWaitPercent},#{item.idlePercent},#{item.memoryFree},#{item.memoryTotal},#{item.buffers},#{item.cached},
+            #{item.memoryUsage},#{item.avgLoad},#{item.diskSituation},#{item.diskFreePercent},#{item.diskUsage},
+            #{item.netTraffic},#{item.netFlowIn},#{item.netFlowOut},#{item.createTime},#{item.param1})
+        </foreach>
+    </insert>
+
+    <insert id="insertMachineStateLogs" parameterType="com.ucar.zkdoctor.pojo.po.MachineStateLog" keyProperty="id"
+            useGeneratedKeys="true">
+        INSERT INTO zk_machine_state_log
+        (<include refid="machine_insert_state_log_fields"/>)
+        VALUES
+        (#{id},#{machineId},#{host},#{cpuUserPercent},#{cpuNicePercent},#{cpuSysPercent},#{cpuSingleUsage},#{cpuUsage},
+        #{ioWaitPercent},#{idlePercent},#{memoryFree},#{memoryTotal},#{buffers},#{cached},
+        #{memoryUsage},#{avgLoad},#{diskSituation},#{diskFreePercent},#{diskUsage},
+        #{netTraffic},#{netFlowIn},#{netFlowOut},#{createTime},#{param1})
+    </insert>
+
+    <select id="getMachineStateLogByMachine" resultType="com.ucar.zkdoctor.pojo.po.MachineStateLog">
+        SELECT
+        <include refid="machine_state_log_fields"/>
+        <![CDATA[ FROM zk_machine_state_log WHERE machine_id = #{machineId} AND create_time >= #{startDate} AND create_time < #{endDate} ]]>
+    </select>
+
+    <delete id="cleanMachineStateLogData" parameterType="date">
+    <![CDATA[ DELETE FROM zk_machine_state_log WHERE create_time < #{endDate} limit 1000 ]]>
+    </delete>
+
+    <select id="cleanMachineStateLogCount" resultType="java.lang.Long" parameterType="date">
+    <![CDATA[ SELECT count(*) FROM zk_machine_state_log WHERE create_time < #{endDate} ]]>
+    </select>
+
+    <select id="getMachineStateLogByTime" resultType="com.ucar.zkdoctor.pojo.po.MachineStateLog">
+        SELECT
+        <include refid="machine_state_log_fields"/>
+        FROM zk_machine_state_log
+        WHERE host = #{host} AND create_time = #{dateTime}
+    </select>
+
+</mapper>

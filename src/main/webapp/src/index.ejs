@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>zkdoctor</title>
+    <script type="text/javascript">
+        var ua = window.navigator.userAgent;
+        var old_ie = ua.indexOf('MSIE ');
+        var new_ie = ua.indexOf('Trident/');
+        if((old_ie > -1) || (new_ie > -1)){
+            var script = document.createElement('script');
+            script.type = 'text/javascript';
+            script.src = '/dist/polyfill.min.js';
+            document.getElementsByTagName('head')[0].appendChild(script);
+        }
+    </script>
+</head>
+<body>
+
+<div id="root"></div>
+<script src="//at.alicdn.com/t/font_c4y7asse3q1cq5mi.js"></script>
+
+</body>
+</html>

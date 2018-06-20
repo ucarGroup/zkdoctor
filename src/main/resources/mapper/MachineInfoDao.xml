@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ucar.zkdoctor.dao.mysql.MachineInfoDao">
+
+    <sql id="machine_fields">
+        id,host,memory,cpu,virtual,real_host realHost,room,monitor,available,service_line serviceLine,host_name hostName,
+        host_domain hostDomain,create_time createTime,modify_time modifyTime,param1
+    </sql>
+
+    <sql id="machine_insert_fields">
+        id,host,memory,cpu,virtual,real_host,room,monitor,available,service_line,host_name,host_domain,
+        create_time,modify_time,param1
+    </sql>
+
+    <insert id="insertMachine" parameterType="com.ucar.zkdoctor.pojo.po.MachineInfo" keyProperty="id"
+            useGeneratedKeys="true">
+        INSERT INTO zk_machine_info
+        (<include refid="machine_insert_fields"/>)
+        VALUES
+        (#{id},#{host},#{memory},#{cpu},#{virtual},#{realHost},#{room},#{monitor},#{available},#{serviceLine},#{hostName},#{hostDomain},#{createTime},#{modifyTime},#{param1});
+    </insert>
+
+    <select id="getMachineInfoById" resultType="com.ucar.zkdoctor.pojo.po.MachineInfo" parameterType="int">
+        SELECT
+        <include refid="machine_fields"/>
+        FROM zk_machine_info
+        WHERE id = #{id};
+    </select>
+
+    <select id="getMachineInfoByHost" resultType="com.ucar.zkdoctor.pojo.po.MachineInfo" parameterType="string">
+        SELECT
+        <include refid="machine_fields"/>
+        FROM zk_machine_info
+        WHERE host = #{host};
+    </select>
+
+    <select id="getMachineInfoByHostName" resultType="com.ucar.zkdoctor.pojo.po.MachineInfo" parameterType="string">
+        SELECT
+        <include refid="machine_fields"/>
+        FROM zk_machine_info
+        WHERE host_name = #{hostName};
+    </select>
+
+    <select id="getMachineInfoByDomain" resultType="com.ucar.zkdoctor.pojo.po.MachineInfo" parameterType="string">
+        SELECT
+        <include refid="machine_fields"/>
+        FROM zk_machine_info
+        WHERE host_domain = #{hostDomain};
+    </select>
+
+    <select id="getAllAvailableMachineInfos" resultType="com.ucar.zkdoctor.pojo.po.MachineInfo">
+        SELECT
+        <include refid="machine_fields"/>
+        FROM zk_machine_info
+        WHERE available = 1;
+    </select>
+
+    <select id="getAllMachineInfos" resultType="com.ucar.zkdoctor.pojo.po.MachineInfo">
+        SELECT
+        <include refid="machine_fields"/>
+        FROM zk_machine_info;
+    </select>
+
+    <select id="getAllMachinesByParams" resultType="com.ucar.zkdoctor.pojo.po.MachineInfo"
+            parameterType="com.ucar.zkdoctor.pojo.bo.MachineSearchBO">
+        SELECT
+        <include refid="machine_fields"/>
+        FROM zk_machine_info
+        WHERE 1 = 1
+        <choose>
+            <when test="host != null and host != ''">
+                AND host = #{host}
+            </when>
+        </choose>
+        <choose>
+            <when test="virtual != null">
+                AND virtual = #{virtual}
+            </when>
+        </choose>
+        <choose>
+            <when test="room != null and room != ''">
+                AND room = #{room}
+            </when>
+        </choose>
+        <choose>
+            <when test="available != null">
+                AND available = #{available}
+            </when>
+        </choose>
+        <choose>
+            <when test="serviceLine != null">
+                AND service_line = #{serviceLine}
+            </when>
+        </choose>
+        <choose>
+            <when test="hostDomain != null and hostDomain != ''">
+                AND host_domain = #{hostDomain}
+            </when>
+        </choose>
+    </select>
+
+    <select id="getMachineInfoByClusterId" resultType="com.ucar.zkdoctor.pojo.po.MachineInfo" parameterType="int">
+        SELECT
+       		machine.id	id,
+			machine.host	host,
+			machine.memory memory,
+			machine.real_host	real_host,
+			machine.room	room,
+			machine.cpu	cpu,
+			machine.virtual	virtual,
+			machine.available	available,
+			machine.service_line	service_line,
+			machine.host_name 	host_name,
+			machine.available 	available,
+			machine.host_domain 	host_domain,
+			machine.create_time 	create_time,
+			machine.modify_time 	modify_time,
+			machine.param1 	param1
+        FROM zk_machine_info machine
+        LEFT JOIN zk_instance_info instance ON machine.id = instance.machine_id
+        WHERE instance.cluster_id = #{clusterId}
+        GROUP BY instance.machine_id
+    </select>
+
+    <update id="updateMachineInfo" parameterType="com.ucar.zkdoctor.pojo.po.MachineInfo">
+        UPDATE zk_machine_info
+        SET memory=#{memory},cpu=#{cpu},virtual=#{virtual},real_host=#{realHost},room=#{room},service_line=#{serviceLine},
+        host_name=#{hostName},host_domain=#{hostDomain},modify_time=#{modifyTime}
+        WHERE id=#{id};
+    </update>
+
+    <update id="updateMachineAvailable" parameterType="com.ucar.zkdoctor.pojo.po.MachineInfo">
+        UPDATE zk_machine_info
+        SET available=#{available},modify_time=now()
+        WHERE id=#{id};
+    </update>
+
+    <delete id="deleteMachineInfoById" parameterType="int">
+        DELETE FROM zk_machine_info WHERE id = #{id};
+    </delete>
+
+    <select id="getAllMonitorMachine" resultType="com.ucar.zkdoctor.pojo.po.MachineInfo">
+        SELECT
+        <include refid="machine_fields"/>
+        FROM zk_machine_info
+        WHERE monitor = 1;
+    </select>
+
+    <update id="updateMachineMonitor">
+        UPDATE zk_machine_info
+        SET monitor=#{monitor},modify_time=now()
+        WHERE id = #{id}
+    </update>
+
+</mapper>

@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ucar.zkdoctor.dao.mysql.ClusterAlarmUserDao">
+
+    <sql id="cluster_alarm_user_fields">
+        id,cluster_id clusterId,user_id userId
+    </sql>
+
+    <sql id="cluster_alarm_user_insert_fields">
+        id,cluster_id,user_id
+    </sql>
+
+    <insert id="insertClusterAlarmUser" parameterType="com.ucar.zkdoctor.pojo.po.ClusterAlarmUser" keyProperty="id"
+            useGeneratedKeys="true">
+        INSERT INTO zk_cluster_alarm_user
+        (<include refid="cluster_alarm_user_insert_fields"/>)
+        VALUES
+        (#{id},#{clusterId},#{userId});
+    </insert>
+
+    <select id="getUserIdsByClusterId" resultType="com.ucar.zkdoctor.pojo.po.ClusterAlarmUser" parameterType="int">
+        SELECT
+        <include refid="cluster_alarm_user_fields"/>
+        FROM zk_cluster_alarm_user
+        WHERE cluster_id = #{clusterId};
+    </select>
+
+    <select id="getclusterIdsByUserId" resultType="com.ucar.zkdoctor.pojo.po.ClusterAlarmUser" parameterType="int">
+        SELECT
+        <include refid="cluster_alarm_user_fields"/>
+        FROM zk_cluster_alarm_user
+        WHERE user_id = #{userId};
+    </select>
+
+    <delete id="deleteAlarmUser">
+        DELETE FROM zk_cluster_alarm_user
+        WHERE cluster_id = #{clusterId} AND user_id = #{userId};
+    </delete>
+
+    <delete id="deleteAllAlarmUser">
+        DELETE FROM zk_cluster_alarm_user
+        WHERE user_id = #{userId};
+    </delete>
+
+</mapper>

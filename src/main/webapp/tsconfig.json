@@ -1,0 +1,17 @@
+{
+  "compilerOptions": {
+    "target": "es6",
+    "moduleResolution": "node",
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "allowSyntheticDefaultImports": true,
+    "sourceMap": true,
+    "allowJs": true,
+    "lib": ["es2017","dom"],
+    "jsx": "react"
+    // "noImplicitAny": true
+  },
+  "include": [
+    "src"
+  ]
+}

@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ucar.zkdoctor.dao.mysql.ServiceLineDao">
+
+    <sql id="service_line_fields">
+        id,service_line_name serviceLineName,service_line_desc serviceLineDesc,create_time createTime,modify_time modifyTime
+    </sql>
+
+    <sql id="service_line_insert_fields">
+        id,service_line_name,service_line_desc,create_time,modify_time
+    </sql>
+
+    <insert id="insertServiceLine" parameterType="com.ucar.zkdoctor.pojo.po.ServiceLine" keyProperty="id"
+            useGeneratedKeys="true">
+        INSERT INTO zk_service_line
+        (<include refid="service_line_insert_fields"/>)
+        VALUES
+        (#{id},#{serviceLineName},#{serviceLineDesc},now(),#{modifyTime});
+    </insert>
+
+    <select id="getServiceLineByName" resultType="com.ucar.zkdoctor.pojo.po.ServiceLine" parameterType="string">
+        SELECT
+        <include refid="service_line_fields"/>
+        FROM zk_service_line
+        WHERE service_line_name = #{serviceLineName};
+    </select>
+
+    <select id="getAllServiceLine" resultType="com.ucar.zkdoctor.pojo.po.ServiceLine">
+        SELECT
+        <include refid="service_line_fields"/>
+        FROM zk_service_line;
+    </select>
+
+    <update id="updateServiceLine" parameterType="com.ucar.zkdoctor.pojo.po.ServiceLine">
+        UPDATE zk_service_line
+        SET
+        service_line_name = #{serviceLineName},
+        service_line_desc = #{serviceLineDesc},
+        modify_time = now()
+        WHERE id = #{id};
+    </update>
+
+    <delete id="deleteServiceLineByName" parameterType="string">
+        DELETE FROM zk_service_line WHERE service_line_name = #{serviceLineName};
+    </delete>
+</mapper>

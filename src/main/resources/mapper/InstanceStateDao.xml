@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ucar.zkdoctor.dao.mysql.InstanceStateDao">
+
+    <sql id="instance_state_fields">
+        id,instance_id instanceId,host_info hostInfo,cluster_id clusterId,version,leader_id leaderId,avg_latency avgLatency,max_latency maxLatency,min_latency minLatency,
+        received,sent,curr_connections currConnections,curr_outstandings currOutstandings,server_state_lag serverStateLag,
+        curr_znode_count currZnodeCount,curr_watch_count currWatchCount,curr_ephemerals_count currEphemeralsCount,
+        approximate_data_size approximateDataSize,open_file_descriptor_count openFileDescriptorCount,max_file_descriptor_count maxFileDescriptorCount,
+        followers,synced_followers syncedFollowers,pending_syncs pendingSyncs,zxid,run_ok runOk,create_time createTime,modify_time modifyTime,param1
+    </sql>
+
+    <sql id="instance_state_insert_fields">
+        id,instance_id,host_info,cluster_id,version,leader_id,avg_latency,max_latency,min_latency,received,sent,curr_connections,curr_outstandings,
+        server_state_lag,curr_znode_count,curr_watch_count,curr_ephemerals_count,approximate_data_size,open_file_descriptor_count,
+        max_file_descriptor_count,followers,synced_followers,pending_syncs,zxid,run_ok,create_time,modify_time,param1
+    </sql>
+
+    <insert id="insertInstanceState" parameterType="com.ucar.zkdoctor.pojo.po.InstanceState" keyProperty="id"
+            useGeneratedKeys="true">
+        INSERT INTO zk_instance_state
+        (<include refid="instance_state_insert_fields"/>)
+        VALUES
+        (#{id},#{instanceId},#{hostInfo},#{clusterId},#{version},#{leaderId},#{avgLatency},#{maxLatency},#{minLatency},#{received},#{sent},#{currConnections},#{currOutstandings},
+        #{serverStateLag},#{currZnodeCount},#{currWatchCount},#{currEphemeralsCount},#{approximateDataSize},#{openFileDescriptorCount},#{maxFileDescriptorCount},
+        #{followers},#{syncedFollowers},#{pendingSyncs},#{zxid},#{runOk},#{createTime},#{modifyTime},#{param1})
+        ON DUPLICATE KEY UPDATE
+        instance_id = #{instanceId},
+        host_info = #{hostInfo},
+        cluster_id = #{clusterId},
+        version = #{version},
+        leader_id = #{leaderId},
+        avg_latency = #{avgLatency},
+        max_latency = #{maxLatency},
+        min_latency = #{minLatency},
+        received = #{received},
+        sent = #{sent},
+        curr_connections = #{currConnections},
+        curr_outstandings = #{currOutstandings},
+        server_state_lag = #{serverStateLag},
+        curr_znode_count = #{currZnodeCount},
+        curr_watch_count = #{currWatchCount},
+        curr_ephemerals_count = #{currEphemeralsCount},
+        approximate_data_size = #{approximateDataSize},
+        open_file_descriptor_count = #{openFileDescriptorCount},
+        max_file_descriptor_count = #{maxFileDescriptorCount},
+        followers = #{followers},
+        synced_followers = #{syncedFollowers},
+        pending_syncs = #{pendingSyncs},
+        zxid = #{zxid},
+        run_ok = #{runOk},
+        modify_time = #{modifyTime},
+        param1 = #{param1};
+    </insert>
+
+    <select id="getInstanceStateByInstanceId" resultType="com.ucar.zkdoctor.pojo.po.InstanceState" parameterType="int">
+        SELECT
+        <include refid="instance_state_fields"/>
+        FROM zk_instance_state
+        WHERE instance_id = #{instanceId};
+    </select>
+
+    <select id="getInstanceStateByClusterId" resultType="com.ucar.zkdoctor.pojo.po.InstanceState" parameterType="int">
+        SELECT
+        <include refid="instance_state_fields"/>
+        FROM zk_instance_state
+        WHERE cluster_id = #{clusterId};
+    </select>
+
+    <delete id="deleteInstanceStateByInstanceId" parameterType="int">
+        DELETE FROM zk_instance_state WHERE instance_id = #{instanceId};
+    </delete>
+</mapper>

@@ -1,0 +1,137 @@
+body {
+  height: 100%;
+  overflow-y: hidden;
+  background-color: #f8f8f8;
+}
+
+::-webkit-scrollbar-corner {
+  background-color: transparent;
+}
+
+::-webkit-scrollbar-button {
+  width: 0;
+  height: 0;
+  display: none;
+}
+
+::-webkit-scrollbar-thumb {
+  width: 100px;
+  background-color: rgba(0,0,0,.2);
+  border-radius: 2px;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  width: 10px;
+}
+
+::-webkit-scrollbar:hover {
+  background-color: transparent;
+}
+
+:global .ant-breadcrumb {
+  & > span {
+    &:last-child {
+      color: #999;
+      font-weight: normal;
+    }
+  }
+}
+
+:global .ant-breadcrumb-link {
+  font-family: Microsoft Yahei;
+  .anticon + span {
+    margin-left: 4px;
+  }
+}
+
+:global .ant-table {
+  .ant-table-thead > tr > th {
+    text-align: center;
+  }
+
+  .ant-table-tbody > tr > td {
+    text-align: center;
+  }
+
+  &.ant-table-small {
+    .ant-table-thead > tr > th {
+      background: #f7f7f7;
+    }
+
+    .ant-table-body > table {
+      padding: 0;
+    }
+  }
+}
+
+:global .ant-table-pagination {
+  float: none!important;
+  display: table;
+  margin: 16px auto !important;
+}
+
+:global .ant-popover-inner {
+  border: none;
+  border-radius: 0;
+  box-shadow: 0 0 20px rgba(100, 100, 100, 0.2);
+}
+
+:global .vertical-center-modal {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  .ant-modal {
+    top: 0;
+
+    .ant-modal-body {
+      max-height: 500px;
+      overflow-y: auto;
+    }
+  }
+}
+
+:global .ant-form-item-control {
+  vertical-align: middle;
+}
+
+:global .ant-row .ant-form-item {
+  margin-bottom: 10px;
+}
+
+.antSpan {
+  display: flex;
+  justify-content: center;
+  min-width: 150px;
+  overflow: scroll;
+}
+
+.znodeContent {
+  max-height: 800px;
+  overflow-y: auto;
+  width: 49%;
+  border-style: solid;
+  border-width: 1px 1px 1px 1px;
+  border-color: #e7e8e9;
+  border-radius: 4px;
+  padding-top: 10px;
+  :global .ant-tree.ant-tree-show-line li span.ant-tree-switcher {
+    background: #fcfcfc;
+    color: rgba(0, 0, 0, 0.45);
+  }
+}
+
+.znodeOperate {
+  border-style: solid;
+  border-width: 1px 0 0 0;
+  border-color: #e7e8e9;
+  margin-top: 10px;
+}
+
+
+@import "../skin.less";
