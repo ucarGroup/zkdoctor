@@ -102,6 +102,9 @@ LDAP：直接用户名密码登录即可
 
 ## 七、问题反馈
 目前有关zkdoctor的问题交流方式有如下几种，欢迎加入进行技术讨论：
+
 1、报告issue：[issues] (https://github.com/ucarGroup/zkdoctor/issues)
+
 2、qq交流群： 824123986
+
 
